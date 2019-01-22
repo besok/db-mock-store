@@ -2,10 +2,7 @@ package ru.besok.db.mock.store.data.common;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Created by Boris Zhguchev on 21/01/2019
@@ -18,6 +15,7 @@ public class ItemType {
   @Id
   @GeneratedValue
   private int id;
+  @Column(name = "code_item_type")
   private String code;
   private String dsc;
 }
