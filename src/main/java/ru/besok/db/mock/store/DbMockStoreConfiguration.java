@@ -5,3 +5,5 @@ package ru.besok.db.mock.store;
  */
 public class DbMockStoreConfiguration {
 }
+
+// TODO: 21.02.2019 Add manyToMany
