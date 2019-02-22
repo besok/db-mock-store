@@ -11,11 +11,9 @@ import javax.persistence.Table;
  * Created by Boris Zhguchev on 21/01/2019
  */
 @Data
-@Table()
 @Entity
-public class PaymentWithoutAnnotation {
+public class PaymentInfo {
   @Id @GeneratedValue
   private int id;
   private String code;
-  private String dsc;
 }

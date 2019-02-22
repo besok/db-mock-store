@@ -15,8 +15,10 @@ import static ru.besok.db.mock.store.DbUtils.*;
  * Created by Boris Zhguchev on 21/02/2019
  */
 public class JpaAnnotationScanner {
-  public void scan(String entityPackage) {
-	checkNull(entityPackage);
+  public static void scan(String entityPackage) {
+	if (Objects.isNull(entityPackage) || entityPackage.isEmpty()) {
+	  throw new JpaAnnotationScanException("package for scan is null or empty");
+	}
 
 	Set<Class<?>> classes = scanPackage(entityPackage);
 
@@ -29,7 +31,7 @@ public class JpaAnnotationScanner {
   }
 
 
-   JpaEntity initEntity(Class<?> cl) {
+   static JpaEntity initEntity(Class<?> cl) {
 	JpaEntity entity = new JpaEntity();
 	String className = cl.getSimpleName();
 	if (cl.isAnnotationPresent(Table.class)) {
@@ -42,13 +44,9 @@ public class JpaAnnotationScanner {
 	return entity;
   }
 
-  private void checkNull(String entityPackage) {
-	if (Objects.isNull(entityPackage) || entityPackage.isEmpty()) {
-	  throw new JpaAnnotationScanException("package for scan is null or empty");
-	}
-  }
 
-  Set<Class<?>> scanPackage(String entityPackage) {
+
+  static Set<Class<?>> scanPackage(String entityPackage) {
 	return new Reflections(entityPackage, new SubTypesScanner(false)).getSubTypesOf(Object.class);
   }
 }

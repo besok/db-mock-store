@@ -33,4 +33,6 @@ public class DbUtils {
   public  static boolean isCollection(Field field) {
 	return Collection.class.isAssignableFrom(field.getType());
   }
+
+
 }

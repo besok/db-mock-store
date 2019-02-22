@@ -10,7 +10,6 @@ import java.util.Map;
 /**
  * Created by Boris Zhguchev on 21/02/2019
  */
-@Data
 public class JpaEntity {
 
   private JpaId id;
@@ -20,17 +19,25 @@ public class JpaEntity {
   private List<JpaColumn> columns;
   private Map<Field, JpaDependency> dependencies;
 
+  public void setHeader(String name, String table, String schema) {
+	header = new Header(name, table, schema);
+  }
+
   @AllArgsConstructor
   private static class Header {
 	String name;
 	String table;
 	String schema;
+
+	String formatForDb() {
+	  if (schema.isEmpty())
+		return table;
+	  return schema + "." + table;
+	}
   }
 
-  public void setHeader(String name,String table, String schema){
-    header = new Header(name,table,schema);
+  public String dbHeader(){
+    return header.formatForDb();
   }
-
-
 
 }

@@ -11,7 +11,7 @@ import javax.persistence.Table;
  * Created by Boris Zhguchev on 21/01/2019
  */
 @Data
-@Table(schema = "test",name = "payment")
+@Table(schema = "test",name = "payment_cust")
 @Entity
 public class Payment {
   @Id @GeneratedValue
