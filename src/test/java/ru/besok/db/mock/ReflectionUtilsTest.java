@@ -51,6 +51,14 @@ public class ReflectionUtilsTest {
 	assertFalse(ReflectionUtils.isCollection(array.getType()));
   }
 
-
-
+  @Test
+  public void getValueNullTest() throws NoSuchFieldException {
+    class E{
+      private S s;
+      class S{}
+	}
+	E e = new E();
+	Object f = ReflectionUtils.getValue(e, E.class.getDeclaredField("s"));
+	Assert.assertNull(f);
+  }
 }

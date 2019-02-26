@@ -28,6 +28,10 @@ public class JpaEntity {
   }
 
 
+  public List<JpaColumn> getColumns() {
+	return columns;
+  }
+
   public Object getIdValue(Object entity) {
 	return ReflectionUtils.getValue(entity, this.getId().getField());
   }

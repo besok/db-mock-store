@@ -13,7 +13,9 @@ import static ru.besok.db.mock.JpaDependency.Type.O2M;
 /**
  * Created by Boris Zhguchev on 21/02/2019
  */
-class DbUtils {
+class JpaUtils {
+
+  public static String DELIM = ";";
 
   static String camelToSnake(String field) {
 	Queue<Character> q = new ArrayDeque<>();
@@ -106,6 +108,12 @@ class DbUtils {
 	}
 	return false;
   }
+  static boolean processManyToMany(JpaEntity entity, Field field) {
+	if (field.isAnnotationPresent(ManyToMany.class)) {
+	  return true;
+	}
+	return false;
+  }
 
   static boolean processPlain(JpaEntity entity,Field field){
 	if (field.isAnnotationPresent(Column.class)) {
@@ -117,6 +125,33 @@ class DbUtils {
 	  entity.addCol(new JpaColumn(field,camelToSnake(field.getName()),true,0, 0,0));
 	}
 	return true;
+  }
+
+  static String quotesWrap(String e){
+    return "\""+e+"\"";
+  }
+
+  static String concat(String delim,String... values){
+    StringBuilder sb = new StringBuilder();
+
+	for (String value : values) {
+	  if(!value.isEmpty()){
+	    sb.append(value).append(delim);
+	  }
+	}
+
+	String res = sb.toString();
+	int idx = res.lastIndexOf(DELIM);
+	if(idx == res.length()-1)
+	  return res.substring(0,res.length()-1);
+	return res;
+  }
+  static String concat(String delim,Object... values){
+   String[] res = new String[values.length];
+	for (int i = 0; i < res.length; i++) {
+	  res[i]=values[i].toString();
+	}
+   return concat(delim,res);
   }
 
   private static JoinColumn firstJoinColumn(Field field) {
@@ -134,4 +169,6 @@ class DbUtils {
 	JoinColumn jc = firstJoinColumn(f);
 	return Objects.isNull(jc) ? camelToSnake(f.getName()) : jc.name();
   }
+
+
 }

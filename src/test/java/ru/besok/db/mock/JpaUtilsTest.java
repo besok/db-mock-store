@@ -3,14 +3,13 @@ package ru.besok.db.mock;
 import org.junit.Assert;
 import org.junit.Test;
 import ru.besok.db.mock.data.common.*;
-import ru.besok.db.mock.store.data.common.*;
 
 
 import java.lang.reflect.Field;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
-import static ru.besok.db.mock.DbUtils.*;
+import static ru.besok.db.mock.JpaUtils.*;
 import static ru.besok.db.mock.JpaDependency.Property.*;
 import static ru.besok.db.mock.JpaDependency.Type.M2O;
 import static ru.besok.db.mock.JpaDependency.Type.O2M;
@@ -18,7 +17,7 @@ import static ru.besok.db.mock.JpaDependency.Type.O2M;
 /**
  * Created by Boris Zhguchev on 21/02/2019
  */
-public class DbUtilsTest {
+public class JpaUtilsTest {
 
   @Test
   public void initEntityWithHeaderTest() {
@@ -29,10 +28,10 @@ public class DbUtilsTest {
 
   @Test
   public void camelToSnakeTest() {
-	assertEquals("camel",DbUtils.camelToSnake("camel"));
-	assertEquals("camel_to_snake",DbUtils.camelToSnake("camelToSnake"));
-	assertEquals("camel_to_snake",DbUtils.camelToSnake("camel_to_snake"));
-	assertEquals("camel__to__snake",DbUtils.camelToSnake("camel_To_Snake"));
+	assertEquals("camel",JpaUtils.camelToSnake("camel"));
+	assertEquals("camel_to_snake",JpaUtils.camelToSnake("camelToSnake"));
+	assertEquals("camel_to_snake",JpaUtils.camelToSnake("camel_to_snake"));
+	assertEquals("camel__to__snake",JpaUtils.camelToSnake("camel_To_Snake"));
   }
 
   @Test
@@ -109,7 +108,11 @@ public class DbUtilsTest {
 	assertEquals(c.getField(),code);
 	assertEquals(c.getName(),"code");
 	assertEquals(t.getName(),"title");
+  }
 
-
+  @Test
+  public void concatTest() {
+	String concat = JpaUtils.concat(";", "aaa", "bbb", "ccc", "ddd");
+	Assert.assertEquals("aaa;bbb;ccc;ddd",concat);
   }
 }

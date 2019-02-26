@@ -27,7 +27,7 @@ public class Order {
   @JoinColumn(name = "payment_id")
   private Payment payment;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "customer_id")
   private Customer customer;
 

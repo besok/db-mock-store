@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@EnableJpaRepositories(basePackages = {"ru.besok.db.mock.store.data"})
-@EntityScan("ru.besok.db.mock.store.data")
+@EnableJpaRepositories(basePackages = {"ru.besok.db.mock.data.common"})
+@EntityScan("ru.besok.db.mock.data.common")
 @Configuration
 @SpringBootApplication
 public class SpringBootConfig {

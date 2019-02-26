@@ -22,17 +22,18 @@ class JpaAnnotationScanner {
 
 	for (Class<?> cl : classes) {
 	  if (cl.isAnnotationPresent(Entity.class)) {
-		JpaEntity jpaEntity = DbUtils.initEntityWithHeader(cl);
+		JpaEntity jpaEntity = JpaUtils.initEntityWithHeader(cl);
 		Field[] fields = cl.getDeclaredFields();
 		for (Field field : fields) {
-		  DbUtils.findIdInField(field)
+		  JpaUtils.findIdInField(field)
 			.map(jpaEntity::setId)
 			.orElseGet(() -> {
-			  boolean m2o = DbUtils.processManyToOne(jpaEntity, field);
-			  boolean o2m = DbUtils.processOneToMany(jpaEntity, field);
-			  boolean o2o = DbUtils.processOneToOne(jpaEntity, field);
-			  if(!(m2o || o2m || o2o)){
-				DbUtils.processPlain(jpaEntity,field);
+			  boolean m2o = JpaUtils.processManyToOne(jpaEntity, field);
+			  boolean o2m = JpaUtils.processOneToMany(jpaEntity, field);
+			  boolean o2o = JpaUtils.processOneToOne(jpaEntity, field);
+			  boolean m2m = JpaUtils.processManyToMany(jpaEntity, field);
+			  if(!(m2o || o2m || o2o || m2m)){
+				JpaUtils.processPlain(jpaEntity,field);
 			  }
 			  return jpaEntity;
 			});
