@@ -2,23 +2,18 @@ package ru.besok.db.mock;
 
 import org.junit.Assert;
 import org.junit.Test;
-import ru.besok.db.mock.data.common.City;
-import ru.besok.db.mock.data.common.Customer;
-import ru.besok.db.mock.data.common.Manager;
-import ru.besok.db.mock.data.common.Order;
+import ru.besok.db.mock.data.common.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Collections.*;
 import static ru.besok.db.mock.JpaAnnotationScanner.*;
 import static ru.besok.db.mock.JpaEntityStore.*;
 
@@ -135,6 +130,22 @@ public class FileMarshallerTest {
 	Assert.assertEquals("\"id\";\"comment\";\"amount\";\"order_time\";\"customer_id\";\"payment_id\"",res.get(0));
 	Assert.assertEquals("\"1\";\"comment\";\"10\";\"2019-01-01T01:01\";\"1\";\"\"",res.get(1));
 
+
+  }  @Test
+  public void marshalOneToOneTest() throws IOException {
+	JpaEntityStore store = buildRelations(scan("ru.besok.db.mock.data.common"));
+	FileMarshaller fileMarshaller = new FileMarshaller(store);
+	Payment payment = new Payment();
+	payment.setCode("code");
+	payment.setDsc("dsc");
+	payment.setId(1);
+	PaymentInfo paymentInfo = new PaymentInfo();
+	paymentInfo.setCode("code");
+	paymentInfo.setId(2);
+	paymentInfo.setPayment(payment);
+	payment.setPaymentInfo(paymentInfo);
+
+	fileMarshaller.marshal(Paths.get("src/test/resources/test_one_to_one"), singletonList(paymentInfo));
 
   }
 }

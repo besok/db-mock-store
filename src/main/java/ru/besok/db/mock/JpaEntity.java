@@ -28,6 +28,14 @@ public class JpaEntity {
   }
 
 
+  public Object newInstance() {
+	try {
+	  return entityClass.newInstance();
+	} catch (InstantiationException | IllegalAccessException e) {
+	  throw new UnmarshallerException(" can not instantiate entity " + entityClass.getSimpleName(), e);
+	}
+  }
+
   public List<JpaColumn> getColumns() {
 	return columns;
   }
@@ -41,18 +49,18 @@ public class JpaEntity {
   }
 
   /**
-   * @param entity      - object containing the needed field
+   * @param entityValue      - object containing the needed field
    * @param column      - field column or field name
    * @param fieldEntity - dep entity
    * @param value       - value for setting
    * @return value
    */
-  public Object setDependencyValue(Object entity, String column, JpaEntity fieldEntity, Object value) {
+  public Object setDependencyValue(Object entityValue, String column, JpaEntity fieldEntity, Object value) {
 
 	dependencies
 	  .get(column)
 	  .filter(d -> d.getEntity().equals(fieldEntity))
-	  .ifPresent(d -> ReflectionUtils.setValue(entity, d.getField(), value));
+	  .ifPresent(d -> ReflectionUtils.setValue(entityValue, d.getField(), value));
 
 	return value;
   }
@@ -77,8 +85,8 @@ public class JpaEntity {
 	return value;
   }
 
-  boolean isId(Field field){
-    return this.id.getField().equals(field);
+  boolean isId(Field field) {
+	return this.id.getField().equals(field);
   }
 
   Set<JpaDependency> dependencySet() {

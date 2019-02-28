@@ -20,9 +20,9 @@ import static ru.besok.db.mock.ReflectionUtils.*;
  */
 public class FileMarshaller implements Marshaller<Path> {
 
-  protected Map<String, Value> valueStore;
   private Logger logger = Logger.getLogger(FileMarshaller.class.getName());
   private JpaEntityStore metaStore;
+  Map<String, Value> valueStore;
 
   public FileMarshaller(JpaEntityStore store) {
 	this.metaStore = store;
@@ -64,7 +64,7 @@ public class FileMarshaller implements Marshaller<Path> {
 		  + " not found in the meta metaStore."));
 
 	String classHeader = je.dbHeader();
-	Value value = getOrInitValue(classHeader);
+	Value value = initAndGetValue(classHeader);
 
 	value.setColumnHeader(makeColHeader(je));
 	value.add(makeRecord(unproxyObject, je));
@@ -88,6 +88,7 @@ public class FileMarshaller implements Marshaller<Path> {
 		.map(JpaUtils::quotesWrap).collect(joining(DELIM));
 	String depOneOne =
 	  je.getDependenciesByType(O2O).stream()
+		.filter(d -> d.getMappedBy().isEmpty())
 		.map(d -> putToStoreThenGetId(object, d))
 		.map(JpaUtils::quotesWrap).collect(joining(DELIM));
 
@@ -121,6 +122,7 @@ public class FileMarshaller implements Marshaller<Path> {
 	  .collect(joining(DELIM));
 
 	String depOneOne = je.getDependenciesByType(O2O).stream()
+	  .filter(d -> d.getMappedBy().isEmpty())
 	  .map(JpaDependency::getColumn)
 	  .map(JpaUtils::quotesWrap)
 	  .collect(joining(DELIM));
@@ -128,7 +130,7 @@ public class FileMarshaller implements Marshaller<Path> {
 	return concat(DELIM, columnId, columns, depManyOne, depOneOne);
   }
 
-  protected Value getOrInitValue(String classHeader) {
+  protected Value initAndGetValue(String classHeader) {
 
 	Value oldVal = valueStore.get(classHeader);
 

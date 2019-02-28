@@ -9,6 +9,7 @@ import static ru.besok.db.mock.JpaDependency.Property.JOIN_PRIMARY_KEYS;
 import static ru.besok.db.mock.JpaDependency.Property.OPTIONAL;
 import static ru.besok.db.mock.JpaDependency.Type.M2O;
 import static ru.besok.db.mock.JpaDependency.Type.O2M;
+import static ru.besok.db.mock.JpaDependency.Type.O2O;
 
 /**
  * Created by Boris Zhguchev on 21/02/2019
@@ -98,9 +99,14 @@ class JpaUtils {
   static boolean processOneToOne(JpaEntity entity, Field field) {
 	if (field.isAnnotationPresent(OneToOne.class)) {
 	  OneToOne ann = field.getDeclaredAnnotation(OneToOne.class);
-
+	  JoinColumn jc = firstJoinColumn(field);
+	  String colName = field.getName();
+	  if(jc != null){
+		String jcName = jc.name();
+		colName= jcName.isEmpty()?colName:jcName;
+	  }
 	  entity.addDep(
-		new JpaDependency(field, null, entity, field.getName(), O2M, ann.mappedBy())
+		new JpaDependency(field, null, entity, colName, O2O, ann.mappedBy())
 		  .property(OPTIONAL, ann.optional())
 		  .property(JOIN_PRIMARY_KEYS, field.isAnnotationPresent(PrimaryKeyJoinColumn.class))
 	  );

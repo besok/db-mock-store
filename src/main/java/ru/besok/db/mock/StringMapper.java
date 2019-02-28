@@ -20,17 +20,17 @@ public interface StringMapper {
 
   StringFucntion<UUID> uuid();
 
-  StringFucntion< String> string();
+  StringFucntion<String> string();
 
-  StringFucntion< BigDecimal> bigDecimal();
+  StringFucntion<BigDecimal> bigDecimal();
 
-  StringFucntion <Integer> integerVal();
+  StringFucntion<Integer> integerVal();
 
-  StringFucntion< Double> doubleVal();
+  StringFucntion<Double> doubleVal();
 
   StringFucntion<Date> date();
 
-  StringFucntion< LocalDateTime> localDateTime();
+  StringFucntion<LocalDateTime> localDateTime();
 
   StringFucntion<LocalDate> localDate();
 
@@ -38,19 +38,19 @@ public interface StringMapper {
 
   StringFucntion<Character> character();
 
-  StringFucntion< byte[]> bytes();
+  StringFucntion<byte[]> bytes();
 
-  StringFucntion< Boolean> booleanVal();
+  StringFucntion<Boolean> booleanVal();
 
   StringFucntion<Long> longVal();
 
   StringFucntion<Short> shortVal();
 
-  StringFucntion< ? extends Enum<?>> enumVal();
+  StringFucntion<? extends Enum<?>> enumVal();
 
 
   default Object generate(Class<?> clazz, String val) {
-    try {
+	try {
 	  if (val.isEmpty()) {
 		return null;
 	  }
@@ -96,15 +96,15 @@ public interface StringMapper {
 		&& clazz.getSuperclass().equals(Enum.class)) {
 		return enumVal().apply(val);
 	  }
-	} catch (Exception e) {
-	  throw new StringMapExeption(" couldn't transform an input value ="+val+" to class="+clazz.getName()
-		+", for custom mapping override a method which processes '"+clazz.getSimpleName()+"' from ",e);
+	} catch (Throwable e) {
+	  throw new StringMapExeption(" couldn't transform an input value =" + val + " to class=" + clazz.getName()
+		+ ", for custom mapping override a method which processes '" + clazz.getSimpleName() + "' from ", e);
 	}
 	return null;
   }
-  
-  
-  interface StringFucntion<V>{
-    V apply(String s) throws Exception;
+
+
+  interface StringFucntion<V> {
+	V apply(String s) throws Exception;
   }
 }

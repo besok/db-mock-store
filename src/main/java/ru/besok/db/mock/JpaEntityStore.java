@@ -32,8 +32,8 @@ public class JpaEntityStore {
 	return entities.stream().filter(e -> Objects.equals(entityClass, e.getEntityClass())).findAny();
   }
 
-  public Optional<JpaEntity> bySchemaTable(Class<?> entityClass) {
-	return entities.stream().filter(e -> Objects.equals(entityClass, e.getEntityClass())).findAny();
+  public Optional<JpaEntity> bySchemaTable(String schemaDotTable) {
+	return entities.stream().filter(e -> Objects.equals(e.dbHeader(),schemaDotTable)).findAny();
   }
 
   public Optional<JpaEntity> byField(Field f) {
