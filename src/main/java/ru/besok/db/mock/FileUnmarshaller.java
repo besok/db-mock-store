@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -41,7 +42,9 @@ public class FileUnmarshaller implements Unmarshaller<Path, QueryableStore> {
 	int totalCount = getRecordsFromFile(source);
 	logger.info(" got " + totalCount + " records from " + source.toString());
 
-	return new QueryableStore(buildObjectRelations(buildObjects(innerStore)));
+	InnerStore innerStore = buildObjectRelations(buildObjects(this.innerStore));
+	HashSet<Record> records = new HashSet<>(innerStore.getRecordMap().values());
+	return new QueryableStore(records);
   }
 
   private int getRecordsFromFile(Path source) {

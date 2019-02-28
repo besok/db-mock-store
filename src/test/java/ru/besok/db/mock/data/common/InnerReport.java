@@ -9,16 +9,17 @@ import javax.persistence.*;
  */
 @Data
 @Entity
-@Table(schema = "test",name = "report")
-public class Report {
+@Table(schema = "test",name = "inner_report")
+public class InnerReport {
 
 	@Id
-	@GeneratedValue
 	private int id;
 	private String code;
 
 	@OneToOne
-	private InnerReport report;
+	@PrimaryKeyJoinColumn(referencedColumnName = "id")
+	private Report report;
+
 
 
 }

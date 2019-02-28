@@ -4,6 +4,7 @@ import org.reflections.Store;
 
 import java.util.*;
 
+import static ru.besok.db.mock.JpaDependency.Property.*;
 import static ru.besok.db.mock.JpaDependency.Type.*;
 import static ru.besok.db.mock.ReflectionUtils.*;
 import static ru.besok.db.mock.UnmarshalUtils.findByIdx;
@@ -65,8 +66,10 @@ class InnerStore extends Store {
 	  .getDependenciesByType(O2O)
 	  .forEach(d -> {
 		if (d.getMappedBy().isEmpty()) {
-		  boolean joinById = Objects.equals(d.getColumn(), d.getEntity().getId().getColumn());
-		  if (joinById) {
+		  String column = d.getColumn();
+		  boolean joinById = Objects.equals(column, d.getEntity().getId().getColumn());
+		  if (joinById || d.property(JOIN_PRIMARY_KEYS)) {
+
 		  } else {
 			mapByField(store, record, entity, pair, d);
 		  }
@@ -102,7 +105,7 @@ class InnerStore extends Store {
 			})));
   }
 
-  Optional<Object> findDepById(String id, JpaEntity entity) {
+  private Optional<Object> findDepById(String id, JpaEntity entity) {
 	for (Record record : recordMap.values()) {
 	  if (record.entity.equals(entity)) {
 		return record.byId(id);
@@ -130,8 +133,6 @@ class InnerStore extends Store {
 	}
 	return record;
   }
-
-
   Map<String, Record> getRecordMap() {
 	return recordMap;
   }

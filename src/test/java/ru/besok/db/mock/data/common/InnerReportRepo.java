@@ -6,4 +6,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Created by Boris Zhguchev on 21/01/2019
  */
 
-public interface ReportRepo extends JpaRepository<Report,Integer> { }
+public interface InnerReportRepo extends JpaRepository<InnerReport,Integer> { }
