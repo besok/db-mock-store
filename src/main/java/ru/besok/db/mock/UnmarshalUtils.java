@@ -8,7 +8,7 @@ import static ru.besok.db.mock.JpaUtils.quotesWrap;
 /**
  * Created by Boris Zhguchev on 28/02/2019
  */
-public class UnmarshalUtils {
+class UnmarshalUtils {
   static String[] split(String val) {
 	String[] splitedVal = val.split(quotesWrap(DELIM));
 	int len = splitedVal.length;

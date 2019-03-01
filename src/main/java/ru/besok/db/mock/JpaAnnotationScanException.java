@@ -1,6 +1,7 @@
 package ru.besok.db.mock;
 
 /**
+ * Exception while scanning metamodel
  * Created by Boris Zhguchev on 21/02/2019
  */
 public class JpaAnnotationScanException extends RuntimeException {

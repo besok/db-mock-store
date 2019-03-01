@@ -12,6 +12,7 @@ import static ru.besok.db.mock.JpaDependency.Type.O2M;
 import static ru.besok.db.mock.JpaDependency.Type.O2O;
 
 /**
+ * utils for processing jpa annotations
  * Created by Boris Zhguchev on 21/02/2019
  */
 class JpaUtils {

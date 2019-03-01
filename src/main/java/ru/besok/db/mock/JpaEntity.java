@@ -8,11 +8,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static ru.besok.db.mock.JpaDependency.Type.*;
-
 /**
+ * Major model class for maintaining pojo information.
  * Created by Boris Zhguchev on 21/02/2019
  */
 public class JpaEntity {
+// TODO: 01.03.2019 Add wrapper for ReflectionUtils methods to this class for getting unified logic.
 
   private JpaId id;
 
@@ -27,8 +28,12 @@ public class JpaEntity {
 	dependencies = new JpaDependencies();
   }
 
-
-  public Object newInstance() {
+  /**
+   * new instance for pojo
+   * @return object with this type
+   * @throws UnmarshallerException when we can't instantiate entity
+   */
+  Object newInstance() {
 	try {
 	  return entityClass.newInstance();
 	} catch (InstantiationException | IllegalAccessException e) {
@@ -36,38 +41,46 @@ public class JpaEntity {
 	}
   }
 
-  public List<JpaColumn> getColumns() {
+  List<JpaColumn> getColumns() {
 	return columns;
   }
 
-  public Object getIdValue(Object entity) {
+  Object getIdValue(Object entity) {
 	return ReflectionUtils.getValue(entity, this.getId().getField());
   }
 
-  public Object setIdValue(Object entity, Object idValue) {
+  Object setIdValue(Object entity, Object idValue) {
 	return ReflectionUtils.setValue(entity, this.getId().getField(), idValue);
   }
 
   /**
-   * @param entityValue      - object containing the needed field
-   * @param column      - field column or field name
-   * @param fieldEntity - dep entity
-   * @param value       - value for setting
+   * Set object to field containing dependency object
+   *
+   * @param entityValue  object containing the needed field
+   * @param column       field column or field name
+   * @param fieldEntity  dep entity
+   * @param value        value for setting
    * @return value
+   * @throws IllegalStateDbMockException for reflection exceptions
    */
-  public Object setDependencyValue(Object entityValue, String column, JpaEntity fieldEntity, Object value) {
-
+  Object setDependencyValue(Object entityValue, String column, JpaEntity fieldEntity, Object value) {
 	dependencies
 	  .get(column)
 	  .filter(d -> d.getEntity().equals(fieldEntity))
 	  .ifPresent(d -> ReflectionUtils.setValue(entityValue, d.getField(), value));
-
 	return value;
   }
 
-
+  /**
+   * reverse process for {@link javax.persistence.OneToMany} collections. When we set entity to {@link javax.persistence.ManyToOne} field
+   * we must check if this relation is bidirectional(has OneToMany) and in this case will set entity to collection.
+   * @param entity entity containing collection
+   * @param fieldName field name is pointed from another class by mappedBy field
+   * @param value value for setting
+   * @return value
+   */
   @SuppressWarnings("unchecked")
-  public Object setDependencyValueToCol(Object entity, String fieldName, Object value) {
+  Object setDependencyValueToCol(Object entity, String fieldName, Object value) {
 	this.getDependenciesByType(O2M)
 	  .stream()
 	  .filter(d -> Objects.equals(d.getMappedBy(), fieldName)).findAny()

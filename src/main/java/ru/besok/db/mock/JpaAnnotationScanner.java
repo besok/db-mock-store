@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
+ * Class for scanning @see java.persistence annotations
  * Created by Boris Zhguchev on 21/02/2019
  */
 class JpaAnnotationScanner {

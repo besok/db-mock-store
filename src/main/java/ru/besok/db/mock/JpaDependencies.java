@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 /**
+ * class maintains @see {@link JpaDependency} list
+ *
  * Created by Boris Zhguchev on 23/02/2019
  */
 public class JpaDependencies {

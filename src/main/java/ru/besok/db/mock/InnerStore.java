@@ -11,6 +11,8 @@ import static ru.besok.db.mock.UnmarshalUtils.findByIdx;
 import static ru.besok.db.mock.UnmarshalUtils.split;
 
 /**
+ * Major store for unmarshalling @see {@link FileUnmarshaller}
+ *
  * Created by Boris Zhguchev on 26/02/2019
  */
 class InnerStore extends Store {
@@ -19,12 +21,19 @@ class InnerStore extends Store {
   private JpaEntityStore entityStore;
   private StringMapper mapper;
 
+  JpaEntityStore getEntityStore() {
+	return entityStore;
+  }
+
   InnerStore(JpaEntityStore store, StringMapper stringMapper) {
 	this.entityStore = store;
 	this.mapper = stringMapper;
 	this.recordMap = new HashMap<>();
   }
 
+  /**
+   * build objects with id and plain columns
+   * */
   static InnerStore buildObjects(InnerStore store) {
 	Collection<Record> records = store.getRecordMap().values();
 	StringMapper m = store.mapper;
@@ -50,6 +59,9 @@ class InnerStore extends Store {
 	return store;
   }
 
+  /**
+   * build relations between objects
+   * */
   // TODO: 28.02.2019 Refactor cyclic hell
   static InnerStore buildObjectRelations(InnerStore store) {
 	for (Record record : store.getRecordMap().values()) {
@@ -62,33 +74,26 @@ class InnerStore extends Store {
   }
 
   private static void oneToOneDependencies(InnerStore store, Record record, JpaEntity entity, Record.Pair pair) {
+	// TODO: 01.03.2019 Don't cover all invariants - primaryJoinCols, if rel is unidirectional and etc
 	entity
 	  .getDependenciesByType(O2O)
 	  .forEach(d -> {
+	    // only when left entity doesn't have O2O(mappedBy) and has JoinColumn. We suppose this rel is bidirectional
 		if (d.getMappedBy().isEmpty()) {
-		  String column = d.getColumn();
-		  boolean joinById = Objects.equals(column, d.getEntity().getId().getColumn());
-		  if (joinById || d.property(JOIN_PRIMARY_KEYS)) {
-
-		  } else {
-			mapByField(store, record, entity, pair, d);
-		  }
-		} else {
-
+		  mapByField(store, record, entity, pair, d);
 		}
 	  });
   }
 
   private static void mapByField(InnerStore store, Record record, JpaEntity entity, Record.Pair pair, JpaDependency d) {
-	String column = d.getColumn();
-	String mappedName = d.getField().getName();
 	d.getEntity().getDependenciesByType(O2O).stream()
-	  .filter(nD -> nD.getMappedBy().equals(mappedName)).findAny()
-	  .ifPresent(nD -> findByIdx(record.idx(column), pair.record)
+	  .filter(dd -> dd.getMappedBy().equals(d.getField().getName()))
+	  .findAny()
+	  .ifPresent(dd -> findByIdx(record.idx(d.getColumn()), pair.record)
 		.ifPresent(idStr -> store.findDepById(idStr, d.getEntity())
 		  .ifPresent(dObject -> {
 			entity.setDependencyValue(pair.object, d.getColumn(), d.getEntity(), dObject);
-			d.getEntity().setDependencyValue(dObject, nD.getColumn(), nD.getEntity(), pair.object);
+			d.getEntity().setDependencyValue(dObject, dd.getColumn(), dd.getEntity(), pair.object);
 		  })));
   }
 
@@ -133,6 +138,7 @@ class InnerStore extends Store {
 	}
 	return record;
   }
+
   Map<String, Record> getRecordMap() {
 	return recordMap;
   }

@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import static ru.besok.db.mock.JpaDependency.Property.JOIN_PRIMARY_KEYS;
 
 /**
+ * common store for maintaining @see {@link JpaEntity}
  * Created by Boris Zhguchev on 23/02/2019
  */
 public class JpaEntityStore {
@@ -28,19 +29,19 @@ public class JpaEntityStore {
 	logger.info("add antity to store " + entity.fullHeader());
   }
 
-  public Optional<JpaEntity> byClass(Class<?> entityClass) {
+  Optional<JpaEntity> byClass(Class<?> entityClass) {
 	return entities.stream().filter(e -> Objects.equals(entityClass, e.getEntityClass())).findAny();
   }
 
-  public Optional<JpaEntity> bySchemaTable(String schemaDotTable) {
+  Optional<JpaEntity> bySchemaTable(String schemaDotTable) {
 	return entities.stream().filter(e -> Objects.equals(e.dbHeader(),schemaDotTable)).findAny();
   }
 
-  public Optional<JpaEntity> byField(Field f) {
+  private Optional<JpaEntity> byField(Field f) {
 	return ReflectionUtils.typeFromField(f).flatMap(this::byClass);
   }
 
-  public List<JpaEntity> getEntities() {
+  List<JpaEntity> getEntities() {
 	return entities;
   }
 

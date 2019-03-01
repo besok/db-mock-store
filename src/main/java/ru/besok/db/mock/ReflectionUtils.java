@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Optional;
 
 /**
+ * utils for reflection
  * Created by Boris Zhguchev on 23/02/2019
  */
 class ReflectionUtils {

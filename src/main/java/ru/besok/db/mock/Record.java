@@ -3,6 +3,7 @@ package ru.besok.db.mock;
 import java.util.*;
 
 /**
+ * Record for unmarshalling
  * Created by Boris Zhguchev on 28/02/2019
  */
 class Record {

@@ -6,6 +6,7 @@ import lombok.Data;
 import java.lang.reflect.Field;
 
 /**
+ * for {@link javax.persistence.Id} annotation
  * Created by Boris Zhguchev on 21/02/2019
  */
 public class JpaId {

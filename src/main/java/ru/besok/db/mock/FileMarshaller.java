@@ -16,6 +16,11 @@ import static ru.besok.db.mock.JpaUtils.DELIM;
 import static ru.besok.db.mock.ReflectionUtils.*;
 
 /**
+ * Marshaller @see {@link Marshaller} to file
+ * This does a marshalling to file by flattening giving instance out like csv export
+ * It based on jpa model
+ * It maintains store for preventing duplicates
+ *
  * Created by Boris Zhguchev on 26/02/2019
  */
 public class FileMarshaller implements Marshaller<Path> {
@@ -30,6 +35,16 @@ public class FileMarshaller implements Marshaller<Path> {
   }
 
 
+  /**
+   *
+   * @param destination path for saving . If it is a directory marshaller will save each entity in its own file,
+   *                    otherwise it will save in one file with separating by entity name.
+   * @param objects objects for saving
+   * @param <T> type for objects. It must be corresponds jpa entities(maintains {@link javax.persistence.Table} or {@link javax.persistence.Entity})
+   * @return result for marshalling
+   * @throws JpaAnnotationScanException if this entity not found in inner store
+   * @throws IllegalStateDbMockException if objects is empty or some IO problems
+   */
   @Override
   public <T> boolean marshal(Path destination, Collection<T> objects) {
 	if (objects.isEmpty()) {
@@ -53,10 +68,10 @@ public class FileMarshaller implements Marshaller<Path> {
 	  toFile(destination, records);
 	}
 
-	return false;
+	return true;
   }
 
-  protected boolean putToStore(Object object) {
+  boolean putToStore(Object object) {
 	Object unproxyObject = unproxy(object);
 	JpaEntity je = metaStore.byClass(unproxyObject.getClass())
 	  .orElseThrow(
@@ -73,7 +88,7 @@ public class FileMarshaller implements Marshaller<Path> {
 	return true;
   }
 
-  protected String makeRecord(Object object, JpaEntity je) {
+  private String makeRecord(Object object, JpaEntity je) {
 	String idValue = quotesWrap(je.getIdValue(object).toString());
 
 	String columns =
@@ -106,7 +121,7 @@ public class FileMarshaller implements Marshaller<Path> {
   }
 
 
-  protected String makeColHeader(JpaEntity je) {
+  String makeColHeader(JpaEntity je) {
 
 	String columnId = quotesWrap(je.getId().getColumn());
 
@@ -130,7 +145,7 @@ public class FileMarshaller implements Marshaller<Path> {
 	return concat(DELIM, columnId, columns, depManyOne, depOneOne);
   }
 
-  protected Value initAndGetValue(String classHeader) {
+  private Value initAndGetValue(String classHeader) {
 
 	Value oldVal = valueStore.get(classHeader);
 
@@ -144,7 +159,7 @@ public class FileMarshaller implements Marshaller<Path> {
   }
 
 
-  protected Path toFile(Path dst, String object) {
+  Path toFile(Path dst, String object) {
 	try {
 	  return Files.write(dst, object.getBytes(), CREATE, WRITE);
 	} catch (IOException e) {
@@ -172,7 +187,7 @@ public class FileMarshaller implements Marshaller<Path> {
 	  return this;
 	}
 
-	public String getClassHeader() {
+	String getClassHeader() {
 	  return classHeader;
 	}
 

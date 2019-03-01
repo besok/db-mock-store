@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Class modulates @see {@link javax.persistence.OneToOne} and {@link javax.persistence.ManyToOne}
+ *
  * Created by Boris Zhguchev on 21/02/2019
  */
 public class JpaDependency {

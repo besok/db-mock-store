@@ -12,6 +12,9 @@ import java.util.stream.Collectors;
 import static ru.besok.db.mock.InnerStore.*;
 
 /**
+ * Unmarshaller @see {@link Unmarshaller} from file
+ * This does a unmarshalling from file
+ *
  * Created by Boris Zhguchev on 26/02/2019
  */
 public class FileUnmarshaller implements Unmarshaller<Path, QueryableStore> {
@@ -34,6 +37,11 @@ public class FileUnmarshaller implements Unmarshaller<Path, QueryableStore> {
 	return innerStore;
   }
 
+  /**
+   * @param source for unmarshalling
+   * @return store for querying needed entities @see {@link QueryableStore}
+   * @throws UnmarshallerException if some goes wrong
+   */
   @Override
   public QueryableStore unmarshal(Path source) {
 	if (source == null) {
@@ -42,9 +50,7 @@ public class FileUnmarshaller implements Unmarshaller<Path, QueryableStore> {
 	int totalCount = getRecordsFromFile(source);
 	logger.info(" got " + totalCount + " records from " + source.toString());
 
-	InnerStore innerStore = buildObjectRelations(buildObjects(this.innerStore));
-	HashSet<Record> records = new HashSet<>(innerStore.getRecordMap().values());
-	return new QueryableStore(records);
+	return new QueryableStore(buildObjectRelations(buildObjects(this.innerStore)));
   }
 
   private int getRecordsFromFile(Path source) {

@@ -1,6 +1,7 @@
 package ru.besok.db.mock;
 
 /**
+ * Exception while casting collection
  * Created by Boris Zhguchev on 23/02/2019
  */
 public class CastCollectionException extends RuntimeException {

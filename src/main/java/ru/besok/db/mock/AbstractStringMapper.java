@@ -10,6 +10,10 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
+ * abstract string mapper @see StringMapper
+ *
+ * @apiNote This class is preferable for implementation than StringMapper
+ *
  * Created by Boris Zhguchev on 28/02/2019
  */
 public abstract class AbstractStringMapper implements StringMapper {

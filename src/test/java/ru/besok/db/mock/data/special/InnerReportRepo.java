@@ -1,4 +1,4 @@
-package ru.besok.db.mock.data.common;
+package ru.besok.db.mock.data.special;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

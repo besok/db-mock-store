@@ -1,6 +1,7 @@
 package ru.besok.db.mock;
 
 /**
+ * Common exception for this package
  * Created by Boris Zhguchev on 23/02/2019
  */
 public class IllegalStateDbMockException extends RuntimeException {

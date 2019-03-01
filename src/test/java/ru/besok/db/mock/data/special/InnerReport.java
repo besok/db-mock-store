@@ -1,4 +1,4 @@
-package ru.besok.db.mock.data.common;
+package ru.besok.db.mock.data.special;
 
 import lombok.Data;
 
@@ -16,8 +16,7 @@ public class InnerReport {
 	private int id;
 	private String code;
 
-	@OneToOne
-	@PrimaryKeyJoinColumn(referencedColumnName = "id")
+	@OneToOne(mappedBy = "")
 	private Report report;
 
 
