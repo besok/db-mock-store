@@ -66,8 +66,10 @@ Files will contain columns and values separating ';' and wrapped quotes.
 #### Several datasources
 
 ### Notes 
-- source or destination is a directory the lib put each entity
-  into separate file named schema.table from @Table annotation or Class Name transforming camelcase to snake case.
-    - otherwise the lib put it into a file. The separator is _@@@_schema.table.
-- QueryableStore assumed to find entity by composite field, for example `Order{customer:Customer{address:Address{street:String}}}` \ 
-you can do:` store.anyByField(Order.class,"customer.address.street","mystreet5")`
+- Source or destination is a directory the lib put each entity into separate file named schema.table \
+from @Table annotation or Class Name transforming camelcase to snake case. \
+Otherwise the lib put it into a file. The separator is _@@@_schema.table.
+
+- QueryableStore assumed to find entity by composite field.\
+For example `Order{customer:Customer{address:Address{street:String}}}`\
+And you can do:` store.anyByField(Order.class,"customer.address.street","mystreet5")`
