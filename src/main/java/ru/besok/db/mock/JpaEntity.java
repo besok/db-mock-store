@@ -1,7 +1,5 @@
 package ru.besok.db.mock;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -182,17 +180,33 @@ public class JpaEntity {
 	return Objects.equals(sch, schema) && Objects.equals(tbl, table);
   }
 
-  @AllArgsConstructor
-  @Getter
   private static class Header {
 	String name;
 	String table;
 	String schema;
 
+	Header(String name, String table, String schema) {
+	  this.name = name;
+	  this.table = table;
+	  this.schema = schema;
+	}
+
 	String formatForDb() {
 	  if (schema.isEmpty())
 		return table;
 	  return schema + "." + table;
+	}
+
+	String getName() {
+	  return name;
+	}
+
+	String getTable() {
+	  return table;
+	}
+
+	String getSchema() {
+	  return schema;
 	}
   }
 

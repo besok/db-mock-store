@@ -1,7 +1,5 @@
 package ru.besok.db.mock;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
 import java.lang.reflect.Field;
 
