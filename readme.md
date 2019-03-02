@@ -11,41 +11,63 @@ Major goal is a possibility to get this entity from csv files exported from data
 Thus we can construct a graph depending objects by @ManyToOne and @OneToOne annotations(@OneToMany and @ManyToMany are a partial cases for previouses)
 For example we have a same structure:
 ```
+@Table(schema=shop,name=order)
 class Order{ 
     @ManyToOne Customer customer
     @ManyToOne Manager manager
     @OneToMany List<OrderBasket> baskets
 }
+@Table(schema=shop,name=customer)
 class Customer{
     @OneToOne Address address
 }
+@Table(schema=shop,name=item)
 class Item{
+    @OneToOne Code code
     @OneToMany List<OrderBasket> baskets
 }
+@Table(schema=shop,name=basket)
 class OrderBasket{
     @ManyToOne Order order
     @ManyToOne Item item   
 }
 ```
 we have a graph :
-<img src='https://g.gravizo.com/svg?
- digraph G {
-   main -> parse -> execute;
-   main -> init;
-   main -> cleanup;
-   execute -> make_string;
-   execute -> printf
-   init -> make_string;
-   main -> printf;
-   execute -> compare;
- }
-'/>
+```
+                          | -> Customer -> Address
+              |-> Order ->| -> Manager
+OrderBasket ->|
+              |-> Item -> Code
+```
 
+Using this lib we can save OrderBasket to file or directory and get 7 files with depending entities corresponded to tables from database:
+- `shop.basket` file
+- `shop.order` file
+- `shop.customer` file
+- `shop.address` file
+- `shop.item` file
+- `shop.code` file
+- `shop.manager` file
+
+Files will contain columns and values separating ';' and wrapped quotes.
+```
+"id";"comment";"amount";"order_time";"customer_id";"payment_id"
+"1";"comment";"10";"2019-01-01T01:01";"1";""
+```
 
 ### Design
 
 ### API
 
 ### Use Cases
+#### Common case
+#### Entities from ManyToOne
+#### Uncommon mapping
+#### Several datasources
 
 ### Notes 
+- source or destination is a directory the lib put each entity
+  into separate file named schema.table from @Table annotation or Class Name transforming camelcase to snake case.
+    - otherwise the lib put it into a file. The separator is _@@@_schema.table.
+- QueryableStore assumed to find entity by composite field, for example `Order{customer:Customer{address:Address{street:String}}}` \ 
+you can do:` store.anyByField(Order.class,"customer.address.street","mystreet5")`
