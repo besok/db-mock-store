@@ -56,19 +56,19 @@ Files will contain columns and values separating ';' and wrapped quotes.
 ```
 
 ### Design
-- [JpaAnnotationScanner](src\main\java\ru\besok\db\mock\JpaAnnotationScanner.java) is in charge for saving information from annotations 
-- [JpaEntityStore](src\main\java\ru\besok\db\mock\JpaEntityStore.java) is major store for meta information gotten from JpaAnnotationScanner
-- [FileMarshaller](src\main\java\ru\besok\db\mock\FileMarshaller.java) is a marshaller to file from entity collection
-- [FileUnmarshaller](src\main\java\ru\besok\db\mock\FileUnmarshaller.java) is a unmarshaller from file
-- [InnerStore](src\main\java\ru\besok\db\mock\InnerStore.java) is major store for unmarshalling from file
+- [JpaAnnotationScanner](src/main/java/ru/besok/db/mock/JpaAnnotationScanner.java) is in charge for saving information from annotations 
+- [JpaEntityStore](src/main/java/ru/besok/db/mock/JpaEntityStore.java) is major store for meta information gotten from JpaAnnotationScanner
+- [FileMarshaller](src/main/java/ru/besok/db/mock/FileMarshaller.java) is a marshaller to file from entity collection
+- [FileUnmarshaller](src/main/java/ru/besok/db/mock/FileUnmarshaller.java) is a unmarshaller from file
+- [InnerStore](src/main/java/ru/besok/db/mock/InnerStore.java) is major store for unmarshalling from file
     - *it can built in 2 stages by invoking buildObjects and buildObjectRelations*    
 - Jpa* are model classes
-- [StringMapper](src\main\java\ru\besok\db\mock\StringMapper.java) is a mapper for transforming string value from file to needed format
-    - [AbstractStringMapper](src\main\java\ru\besok\db\mock\AbstractStringMapper.java) is default implementation. It is recommended for inheritance 
-- [Record](src\main\java\ru\besok\db\mock\Record.java) is a model for unmarshalling process
-- [QueryableStore](src\main\java\ru\besok\db\mock\QueryableStore.java) is a store containing InnerStore and is able to make queries to it.
-- [MockFileInvoker](src\main\java\ru\besok\db\mock\MockFileInvoker.java) is a facade for running marshallers and unmarshallers
-- [AbstractJpaFileMock](src\main\java\ru\besok\db\tests\AbstractJpaFileMock.java) is default parent class making easier tests
+- [StringMapper](src/main/java/ru/besok/db/mock/StringMapper.java) is a mapper for transforming string value from file to needed format
+    - [AbstractStringMapper](src/main/java/ru/besok/db/mock/AbstractStringMapper.java) is default implementation. It is recommended for inheritance 
+- [Record](src/main/java/ru/besok/db/mock/Record.java) is a model for unmarshalling process
+- [QueryableStore](src/main/java/ru/besok/db/mock/QueryableStore.java) is a store containing InnerStore and is able to make queries to it.
+- [MockFileInvoker](src/main/java/ru/besok/db/mock/MockFileInvoker.java) is a facade for running marshallers and unmarshallers
+- [AbstractJpaFileMock](src/main/java/ru/besok/db/tests/AbstractJpaFileMock.java) is default parent class making easier tests
  
 ### API
 
@@ -80,7 +80,7 @@ Files will contain columns and values separating ';' and wrapped quotes.
 
 ### Notes 
 - Source or destination is a directory the lib put each entity into separate file named schema.table \
-from @Table annotation or Class Name transforming camelcase to snake case. \
+from @Table annotation or Class Name transforming camelcase to snake case.\
 Otherwise the lib put it into a file. The separator is _@@@_schema.table.
 
 - QueryableStore assumed to find entity by composite field.\
