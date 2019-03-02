@@ -5,6 +5,7 @@ import org.junit.Test;
 import ru.besok.db.mock.data.common.Customer;
 import ru.besok.db.mock.data.common.Order;
 import ru.besok.db.tests.AbstractJpaFileMock;
+import ru.besok.db.tests.ResourceUtils;
 
 import java.util.List;
 import java.util.Optional;

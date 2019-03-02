@@ -71,8 +71,49 @@ Files will contain columns and values separating ';' and wrapped quotes.
 - [AbstractJpaFileMock](src/main/java/ru/besok/db/tests/AbstractJpaFileMock.java) is default parent class making easier tests
  
 ### API
+you have 2 options for starting work with this library:
+- for getting access from tests you need to inherit from [AbstractJpaFileMock](src/main/java/ru/besok/db/tests/AbstractJpaFileMock.java) \
+and point a package with pojos(containing @Table,@Entity or etc)
+```
+public class QueryableStoreTest extends AbstractJpaFileMock {
+  public QueryableStoreTest() {
+	super("ru.besok.db.mock.data.common");
+  }
+  @Test
+  public void test(){
+    List<Item> items = itemRepoFromDb.findAll();
+    toFile(items, "item/case"); // save objects to file or directory
+    QueryableStore store = store("item","case"); // get store for running objects
+    List<Item> itemsFromFile = store.all(Item.class);
+  }
+}
+```
+- you can instantiate it with yourself by invoking [MockFileInvoker](src/main/java/ru/besok/db/mock/MockFileInvoker.java)
+```
+...
+List<Item> items = itemRepoFromDb.findAll();
+MockFileInvoker invoker = new MockFileInvoker(pkgForScan);
+invoker.toFile(items,ResourceUtils.resolveIn("item/case")); // save objects to file or directory
+QueryableStore store = invoker.fromFile("item","case"); // get store for running objects
+List<Item> itemsFromFile = store.all(Item.class);
+...
+```
+**if source or destination is a directory each entity is in a separated file named schema.table**\
+**Otherwise each entity separated by a header _@@@_schema.table**
 
-### Use Cases
+Files have a csv similar syntax:
+- every section has a header from columns wrapped quotes separated ';'
+- every line has a values wrapped quotes separated ';'
+
+[QueryableStore](src/main/java/ru/besok/db/mock/QueryableStore.java) let you process followings commands:
+- `all(Class<V> vClass)` find all entities from this dir or file by class
+- `any(Class<V> vClass)` find random entity from this dir or file by class
+- `anyByField | allByField(Class<V> vClass, fieldName, fieldValue)` find all entities from this 
+dir or file by class by fieldValue(field can be composite see notes)
+- `byId(Class<V> vClass, Object id)` find entity by id
+
+
+### Use Cases in tests
 #### Common case
 #### Entities from ManyToOne
 #### Uncommon mapping
@@ -86,3 +127,5 @@ Otherwise the lib put it into a file. The separator is _@@@_schema.table.
 - QueryableStore assumed to find entity by composite field.\
 For example `Order{customer:Customer{address:Address{street:String}}}`\
 And you can do:` store.anyByField(Order.class,"customer.address.street","mystreet5")`
+
+- 

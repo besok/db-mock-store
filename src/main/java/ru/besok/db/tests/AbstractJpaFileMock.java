@@ -1,14 +1,11 @@
 package ru.besok.db.tests;
 
+import ru.besok.db.mock.AbstractStringMapper;
 import ru.besok.db.mock.MockFileInvoker;
 import ru.besok.db.mock.QueryableStore;
+import ru.besok.db.mock.StringMapper;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 import static ru.besok.db.tests.ResourceUtils.resolveIn;
 
@@ -33,6 +30,22 @@ public abstract class AbstractJpaFileMock {
    */
   protected QueryableStore store(String... paths){
     return invoker.fromFile(resolveIn(paths));
+  }
+
+  /**
+   * change package for scanning
+   * @param pkg new package
+   */
+  protected void withPackage(String pkg){
+    invoker.withPackage(pkg);
+  }
+
+  /**
+   * change stringmapper
+   * @param mapper new mapper @see {@link StringMapper} or {@link AbstractStringMapper}
+   */
+  private void withMapper(StringMapper mapper){
+    invoker.withMapper(mapper);
   }
 
   protected<E> boolean toFile( Collection<E> objects,String... paths){
