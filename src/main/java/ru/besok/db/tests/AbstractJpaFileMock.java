@@ -26,7 +26,6 @@ public abstract class AbstractJpaFileMock {
     invoker=new MockFileInvoker(pkgForScan);
   }
 
-
   /**
    * store dir or file in resources
    * @param paths - paths in resources
@@ -43,11 +42,8 @@ public abstract class AbstractJpaFileMock {
     return invoker.toFile(resolveIn(paths),object);
   }
 
-
   protected MockFileInvoker invoker(String pkgForScan){
     return new MockFileInvoker(pkgForScan);
   }
-
-
 
 }

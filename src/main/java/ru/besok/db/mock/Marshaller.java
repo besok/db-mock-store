@@ -17,5 +17,4 @@ public interface Marshaller<T> {
    * @return result for saving
    */
  <E> boolean marshal(T destination,Collection<E> objects);
-
 }

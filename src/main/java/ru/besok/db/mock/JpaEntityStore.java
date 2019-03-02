@@ -14,15 +14,11 @@ public class JpaEntityStore {
 
   private Logger logger = Logger.getLogger(JpaEntityStore.class.getName());
 
-
   private List<JpaEntity> entities;
 
   public JpaEntityStore() {
 	entities = new ArrayList<>();
   }
-
-
-
 
   public void add(JpaEntity entity) {
 	entities.add(entity);

@@ -88,11 +88,8 @@ public class MockFileInvoker {
     return fileUnmarshaller.unmarshal(source);
   }
 
-
   private JpaEntityStore buildStore(String packageForScan){
     return buildRelations(scan(packageForScan));
   }
-
-
 
 }

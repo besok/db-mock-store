@@ -13,7 +13,6 @@ public class QueryableStore implements Store {
   private InnerStore innerStore;
   private Random r;
 
-
   QueryableStore(InnerStore innerStore) {
 	r = new Random();
 	this.innerStore = innerStore;
@@ -130,5 +129,4 @@ public class QueryableStore implements Store {
   private Optional<Record> byJpaEntity(JpaEntity jpaEntity) {
 	return innerStore.getRecordMap().values().stream().filter(r -> r.entity.equals(jpaEntity)).findAny();
   }
-
 }

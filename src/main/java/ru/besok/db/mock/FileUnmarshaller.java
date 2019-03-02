@@ -21,7 +21,6 @@ public class FileUnmarshaller implements Unmarshaller<Path, QueryableStore> {
   private Logger logger = Logger.getLogger(FileUnmarshaller.class.getName());
   private InnerStore innerStore;
 
-
   public FileUnmarshaller(JpaEntityStore entityStore) {
 	this(entityStore, new DummyStringMapper());
   }
@@ -107,6 +106,5 @@ public class FileUnmarshaller implements Unmarshaller<Path, QueryableStore> {
 	  throw new UnmarshallerException(" can't process files ", e);
 	}
   }
-
 
 }

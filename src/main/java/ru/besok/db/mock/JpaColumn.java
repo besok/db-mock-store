@@ -9,9 +9,9 @@ public class JpaColumn {
   private Field field;
   private String name;
   private boolean nullable;
-  private int length=255;
-  private int precision=0;
-  private int scale=0;
+  private int length;
+  private int precision;
+  private int scale;
 
   public JpaColumn(Field field, String name, boolean nullable, int length, int precision, int scale) {
 	this.field = field;
@@ -69,8 +69,6 @@ public class JpaColumn {
   public void setScale(int scale) {
 	this.scale = scale;
   }
-
-
 
   protected boolean canEqual(Object other) {
 	return other instanceof JpaColumn;

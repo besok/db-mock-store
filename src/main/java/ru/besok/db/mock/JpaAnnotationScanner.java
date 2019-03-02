@@ -46,7 +46,6 @@ class JpaAnnotationScanner {
 	return store;
   }
 
-
  private static Set<Class<?>> scanPackage(String entityPackage) {
 	return new Reflections(entityPackage, new SubTypesScanner(false)).getSubTypesOf(Object.class);
   }

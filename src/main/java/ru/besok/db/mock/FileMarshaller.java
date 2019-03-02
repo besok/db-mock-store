@@ -34,7 +34,6 @@ public class FileMarshaller implements Marshaller<Path> {
 	this.valueStore = new HashMap<>();
   }
 
-
   /**
    *
    * @param destination path for saving . If it is a directory marshaller will save each entity in its own file,
@@ -54,7 +53,6 @@ public class FileMarshaller implements Marshaller<Path> {
 	for (Object object : objects) {
 	  boolean res = putToStore(object);
 	}
-
 
 	if (Files.isDirectory(destination)) {
 	  valueStore.values()
@@ -120,7 +118,6 @@ public class FileMarshaller implements Marshaller<Path> {
 	return depIdVal.toString();
   }
 
-
   String makeColHeader(JpaEntity je) {
 
 	String columnId = quotesWrap(je.getId().getColumn());
@@ -157,7 +154,6 @@ public class FileMarshaller implements Marshaller<Path> {
 
 	return oldVal;
   }
-
 
   Path toFile(Path dst, String object) {
 	try {

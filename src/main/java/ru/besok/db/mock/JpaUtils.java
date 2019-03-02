@@ -177,5 +177,4 @@ class JpaUtils {
 	return Objects.isNull(jc) ? camelToSnake(f.getName()) : jc.name();
   }
 
-
 }

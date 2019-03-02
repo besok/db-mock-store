@@ -143,5 +143,4 @@ class InnerStore extends Store {
 	return recordMap;
   }
 
-
 }

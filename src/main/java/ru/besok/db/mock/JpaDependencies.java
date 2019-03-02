@@ -11,11 +11,9 @@ import java.util.*;
 public class JpaDependencies {
   private Set<JpaDependency> dependencies;
 
-
   public JpaDependencies() {
 	this.dependencies = new HashSet<>();
   }
-
 
   public Set<JpaDependency> getDependencies() {
 	return dependencies;

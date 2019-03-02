@@ -48,7 +48,6 @@ public interface StringMapper {
 
   StringFucntion<? extends Enum<?>> enumVal();
 
-
   default Object generate(Class<?> clazz, String val) {
 	try {
 	  if (val.isEmpty()) {
@@ -102,7 +101,6 @@ public interface StringMapper {
 	}
 	return null;
   }
-
 
   interface StringFucntion<V> {
 	V apply(String s) throws Exception;
