@@ -82,14 +82,14 @@ public class QueryableStore implements Store {
 	List<V> list = all(vClass);
 	return innerStore.getEntityStore()
 	  .byClass(vClass)
-	  .map(e -> {
+	  .flatMap(e -> {
 		for (V v : list) {
 		  Object idValue = e.getIdValue(v);
 		  if (idValue.equals(id)) {
-			return v;
+			return Optional.of(v);
 		  }
 		}
-		return null;
+		return Optional.empty();
 	  });
   }
 
