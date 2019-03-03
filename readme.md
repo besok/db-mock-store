@@ -114,11 +114,140 @@ dir or file by class by fieldValue(field can be composite see notes)
 
 
 ### Use Cases in tests
-#### Common case
-#### Entities from ManyToOne
-#### Uncommon mapping
-#### Several datasources
+#### Simple case 
+Common case is we can do some programs logic without spring context by mocking components especially Repositories. 
+```
+public class CommonCaseExampleTest extends AbstractJpaFileMock {
+  public CommonCaseExampleTest() {
+	super("your.package.with.pojos");
+  }
+  
+  AppComponent component;
 
+  @Before
+  public void setUp() throws Exception {
+	QueryableStore store = store("test_dir");
+	OrderRepo orderRepo = Mockito.mock(OrderRepo.class);
+	List<Order> orders = store.all(Order.class); // we can get all orders from file instead of database
+	Mockito.when(orderRepo.findAll()).thenReturn(orders); 
+	component = new AppComponent(orderRepo);
+  }
+
+  @Test
+  public void test() {
+	int result = component.doSomeLogic();
+	Assert.assertEquals(42,result);
+  }
+
+  public class AppComponent {
+	private OrderRepo orderRepo;
+
+	AppComponent(OrderRepo orderRepo) {
+	  this.orderRepo = orderRepo;
+	}
+	
+	public int doSomeLogic(){
+	  List<Order> orders = orderRepo.findAll();
+	  
+	  int res = 42; // some hard logic
+	  return res;
+	}
+  }
+
+}
+```
+#### Entities from ManyToOne
+If you have structure like that:
+```
+class Customer{	
+    @OneToMany List<Order> orders;
+  }
+class Order{
+	@ManyToOne	Customer customer;
+	@OneToMany List<OrderBasket> baskets;
+  }
+class Item{	
+    @OneToMany List<OrderBasket> baskets
+  }
+class OrderBasket{
+	@ManyToOne Order order;
+	@ManyToOne Item item;
+  }
+```
+and you want to drop to file all OrderBaskets from Customer you can do something like that:
+```
+List<OrderBasket> baskets = 
+    customer.getOrders().stream()
+		.map(Order::getBaskets)
+		.flatMap(Collection::stream)
+		.collect(Collectors.toList());
+		
+toFile(baskets,"path_for_saving");
+```
+#### Uncommon mapping
+if you have some fields with uncommon format ,for example for date you can get StringMapException. For solving this you can do your own String mapper:
+```
+"id";"time";"name"
+"1";"2019-01-01 00:00";"new_year_party"
+```
+For solving this you can do your own String mapper by implementing [AbstractStringMapper](src/main/java/ru/besok/db/mock/AbstractStringMapper.java):
+```
+public class UserStringMapper extends AbstractStringMapper {
+  @Override
+  public StringFunction<LocalDateTime> localDateTime() {
+	return s -> LocalDateTime.parse(s, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+  }
+}
+```
+And mix it to a invoker:
+```
+public class CommonCaseExampleTest extends AbstractJpaFileMock {
+ @Before
+  public void setUp() throws Exception {
+    withMapper(new UserStringMapper());
+  }
+}
+...
+invoker.withMapper(new UserStringMapper());
+```
+#### Several datasources
+if you have several databases with different packages for scan you have to have several invokers or switch one invoker all time:
+- you can instantiate several invokers(*note, for invoker you can use ResourceUtils*):
+```
+public class CommonCaseExampleTest extends AbstractJpaFileMock {
+
+
+  public CommonCaseExampleTest() {
+	super("pkg.for.first.db");
+  }
+
+  SpringComponent component;
+
+  @Before
+  public void setUp() throws Exception {
+	QueryableStore storeForFirstDb = store("test_dir");
+	MockFileInvoker invoker = invoker("pkg.for.second.db");
+	QueryableStore storeForSecondDb = invoker.fromFile(ResourceUtils.resolveIn("other_dir"));
+	}
+}
+```
+- you can switch packages for one invoker:
+```
+public class CommonCaseExampleTest extends AbstractJpaFileMock {
+  public CommonCaseExampleTest() {
+	super("pkg.for.first.db");
+  }
+
+  SpringComponent component;
+
+  @Before
+  public void setUp() throws Exception {
+	QueryableStore storeForFirstDb = store("test_dir");
+	withPackage("pkg.for.second.db");
+	QueryableStore storeForSecondDb = store("other_dir");
+	}
+}
+```
 ### Notes 
 - Source or destination is a directory the lib put each entity into separate file named schema.table \
 from @Table annotation or Class Name transforming camelcase to snake case.\
@@ -128,4 +257,6 @@ Otherwise the lib put it into a file. The separator is _@@@_schema.table.
 For example `Order{customer:Customer{address:Address{street:String}}}`\
 And you can do:` store.anyByField(Order.class,"customer.address.street","mystreet5")`
 
-- 
+- This lib does not cover all possible cases for java persistent annotation. It plans to do further.
+
+- This lib works correctly with hibernate orm. Others aren't tested.

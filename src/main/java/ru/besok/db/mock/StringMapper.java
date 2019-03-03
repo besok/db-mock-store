@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Function;
 
 /**
  * Basic interface supplier for generating values for plain fields.
@@ -18,35 +17,35 @@ import java.util.function.Function;
 public interface StringMapper {
 
 
-  StringFucntion<UUID> uuid();
+  StringFunction<UUID> uuid();
 
-  StringFucntion<String> string();
+  StringFunction<String> string();
 
-  StringFucntion<BigDecimal> bigDecimal();
+  StringFunction<BigDecimal> bigDecimal();
 
-  StringFucntion<Integer> integerVal();
+  StringFunction<Integer> integerVal();
 
-  StringFucntion<Double> doubleVal();
+  StringFunction<Double> doubleVal();
 
-  StringFucntion<Date> date();
+  StringFunction<Date> date();
 
-  StringFucntion<LocalDateTime> localDateTime();
+  StringFunction<LocalDateTime> localDateTime();
 
-  StringFucntion<LocalDate> localDate();
+  StringFunction<LocalDate> localDate();
 
-  StringFucntion<Timestamp> timestamp();
+  StringFunction<Timestamp> timestamp();
 
-  StringFucntion<Character> character();
+  StringFunction<Character> character();
 
-  StringFucntion<byte[]> bytes();
+  StringFunction<byte[]> bytes();
 
-  StringFucntion<Boolean> booleanVal();
+  StringFunction<Boolean> booleanVal();
 
-  StringFucntion<Long> longVal();
+  StringFunction<Long> longVal();
 
-  StringFucntion<Short> shortVal();
+  StringFunction<Short> shortVal();
 
-  StringFucntion<? extends Enum<?>> enumVal();
+  StringFunction<? extends Enum<?>> enumVal();
 
   default Object generate(Class<?> clazz, String val) {
 	try {
@@ -102,7 +101,7 @@ public interface StringMapper {
 	return null;
   }
 
-  interface StringFucntion<V> {
+  interface StringFunction<V> {
 	V apply(String s) throws Exception;
   }
 }
