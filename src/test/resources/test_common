@@ -1,9 +1,9 @@
 _@@@_test.city
-"id";"code";"title"
-"1";"100";""
+"id";"code";"title";"type";"type_ordinal"
+"1";"100";"";"";""
 _@@@_test.customer
-"id";"name";"login";"mail";"phone";"manager_id";"city_id"
-"1";"name";"login";"mail";"";"";"1"
+"id";"name";"login";"mail";"phone";"city_id";"manager_id"
+"1";"name";"login";"mail";"";"1";""
 _@@@_test.inner_order
-"id";"comment";"amount";"order_time";"customer_id";"payment_id"
-"1";"comment";"10";"2019-01-01T01:01";"1";""
+"id";"comment";"amount";"order_time";"payment_id";"customer_id"
+"1";"comment";"10";"2019-01-01T01:01";"";"1"

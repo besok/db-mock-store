@@ -23,7 +23,7 @@ public class JpaUtilsTest {
   public void initEntityWithHeaderTest() {
 	assertEquals(initEntityWithHeader(City.class).dbHeader(),"test.city");
 	assertEquals(initEntityWithHeader(Payment.class).dbHeader(),"test.payment_cust");
-	assertEquals(initEntityWithHeader(PaymentInfo.class).dbHeader(),"payment_info");
+	assertEquals(initEntityWithHeader(PaymentInfo.class).dbHeader(),"test.payment_info");
   }
 
   @Test

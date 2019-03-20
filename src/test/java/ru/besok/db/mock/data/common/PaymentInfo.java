@@ -18,4 +18,5 @@ public class PaymentInfo {
   @OneToOne
   @JoinColumn(name = "payment_id")
   private Payment payment;
+
 }

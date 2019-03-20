@@ -1,6 +1,7 @@
 package ru.besok.db.mock;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import ru.besok.db.mock.data.common.Customer;
 import ru.besok.db.mock.data.common.Order;
@@ -20,6 +21,7 @@ import static ru.besok.db.mock.JpaEntityStore.buildRelations;
  */
 public class FileUnmarshallerTest {
 
+	@Ignore
   @Test
   public void initStoreDirTest() {
 	Path p = Paths.get("src/test/resources/test_dir");
@@ -41,6 +43,7 @@ public class FileUnmarshallerTest {
 	Assert.assertArrayEquals(new String[]{"id","comment","amount","order_time","customer_id","payment_id"},columns);
 	Assert.assertArrayEquals(new String[]{"1","comment","10","2019-01-01T01:01","1",""},records);
   }
+  @Ignore
   @Test
   public void initStoreFileTest() {
 	Path p = Paths.get("src/test/resources/test_common");
@@ -93,7 +96,7 @@ public class FileUnmarshallerTest {
 	fileUnmarshaller.unmarshal(p);
 	InnerStore innerStore = fileUnmarshaller.getInnerStore();
 	Map<String, Record> recordMap = innerStore.getRecordMap();
-	Record payment_info = recordMap.get("payment_info");
+	Record payment_info = recordMap.get("test.payment_info");
 	Record test_payment_cust = recordMap.get("test.payment_cust");
 	PaymentInfo paymentInfo = (PaymentInfo) payment_info.pairs.iterator().next().object;
 	Payment payment = (Payment) test_payment_cust.pairs.iterator().next().object;

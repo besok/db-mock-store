@@ -1,2 +1,2 @@
-"id";"comment";"amount";"order_time";"customer_id";"payment_id"
-"1";"comment";"10";"2019-01-01T01:01";"1";""
+"id";"comment";"amount";"order_time";"payment_id";"customer_id"
+"1";"comment";"10";"2019-01-01T01:01";"";"1"

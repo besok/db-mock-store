@@ -120,6 +120,7 @@ class InnerStore extends Store {
   }
 
   Record initRecord(String key, List<String> records) {
+  	records.removeIf(String::isEmpty);
 	Record record = recordMap.get(key);
 	if (Objects.isNull(record)) {
 	  record = new Record(key);

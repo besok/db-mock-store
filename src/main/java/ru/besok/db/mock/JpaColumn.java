@@ -6,75 +6,98 @@ import java.lang.reflect.Field;
  * Created by Boris Zhguchev on 21/02/2019
  */
 public class JpaColumn {
-  private Field field;
-  private String name;
-  private boolean nullable;
-  private int length;
-  private int precision;
-  private int scale;
+    private Field field;
+    private String name;
+    private boolean nullable;
+    private int length;
+    private int precision;
+    private int scale;
+    private EnumFlag enumFlag;
 
-  public JpaColumn(Field field, String name, boolean nullable, int length, int precision, int scale) {
-	this.field = field;
-	this.name = name;
-	this.nullable = nullable;
-	this.length = length;
-	this.precision = precision;
-	this.scale = scale;
-  }
+    public JpaColumn(Field field, String name, boolean nullable, int length, int precision, int scale,EnumFlag enumFlag) {
+        this.field = field;
+        this.name = name;
+        this.nullable = nullable;
+        this.length = length;
+        this.precision = precision;
+        this.scale = scale;
+        this.enumFlag=enumFlag;
+    }
 
-  public Field getField() {
-	return this.field;
-  }
+    public EnumFlag getEnumFlag() {
+        return enumFlag;
+    }
 
-  public String getName() {
-	return this.name;
-  }
+    public void setEnumFlag(EnumFlag enumFlag) {
+        this.enumFlag = enumFlag;
+    }
 
-  public boolean isNullable() {
-	return this.nullable;
-  }
+    public Field getField() {
+        return this.field;
+    }
 
-  public int getLength() {
-	return this.length;
-  }
+    public String getName() {
+        return this.name;
+    }
 
-  public int getPrecision() {
-	return this.precision;
-  }
+    public boolean isNullable() {
+        return this.nullable;
+    }
 
-  public int getScale() {
-	return this.scale;
-  }
+    public int getLength() {
+        return this.length;
+    }
 
-  public void setField(Field field) {
-	this.field = field;
-  }
+    public int getPrecision() {
+        return this.precision;
+    }
 
-  public void setName(String name) {
-	this.name = name;
-  }
+    public int getScale() {
+        return this.scale;
+    }
 
-  public void setNullable(boolean nullable) {
-	this.nullable = nullable;
-  }
+    public void setField(Field field) {
+        this.field = field;
+    }
 
-  public void setLength(int length) {
-	this.length = length;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public void setPrecision(int precision) {
-	this.precision = precision;
-  }
+    public void setNullable(boolean nullable) {
+        this.nullable = nullable;
+    }
 
-  public void setScale(int scale) {
-	this.scale = scale;
-  }
+    public void setLength(int length) {
+        this.length = length;
+    }
 
-  protected boolean canEqual(Object other) {
-	return other instanceof JpaColumn;
-  }
+    public void setPrecision(int precision) {
+        this.precision = precision;
+    }
 
-  public String toString() {
-	return "JpaColumn(field=" + this.getField() + ", name=" + this.getName() + ", nullable=" + this.isNullable() + ", length=" + this.getLength() + ", precision=" + this.getPrecision() + ", scale=" + this.getScale() + ")";
-  }
+    public void setScale(int scale) {
+        this.scale = scale;
+    }
+
+    protected boolean canEqual(Object other) {
+        return other instanceof JpaColumn;
+    }
+
+    @Override
+    public String toString() {
+        return "JpaColumn{" +
+                "field=" + field +
+                ", name='" + name + '\'' +
+                ", nullable=" + nullable +
+                ", length=" + length +
+                ", precision=" + precision +
+                ", scale=" + scale +
+                ", enumFlag=" + enumFlag +
+                '}';
+    }
+
+    public enum EnumFlag {
+        NOT_ENUM,STRING,ORDINAL
+    }
 }

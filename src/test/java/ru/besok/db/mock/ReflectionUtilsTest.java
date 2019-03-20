@@ -25,7 +25,7 @@ public class ReflectionUtilsTest {
 	Field s = T.class.getDeclaredField("s");
 	Field strs = T.class.getDeclaredField("strs");
 
-	Assert.assertEquals(ReflectionUtils.typeFromField(s),Optional.empty());
+	Assert.assertEquals(ReflectionUtils.typeFromField(s),Optional.of(String.class));
 	Assert.assertEquals(ReflectionUtils.typeFromField(strs),Optional.of(String.class));
 
 	Field raws = T.class.getDeclaredField("raws");

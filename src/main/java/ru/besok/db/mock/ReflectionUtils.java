@@ -64,6 +64,15 @@ class ReflectionUtils {
 	return field.getDeclaringClass().getSimpleName() + "#" + field.getName();
   }
 
+  static  public Object getEnumByVal(Class<?> clazz, Object value) {
+	  Object[] constants = clazz.getEnumConstants();
+	  for (int i = 0; i < constants.length; i++) {
+		  if (constants[i].toString().equals(value.toString())) {
+			  return i;
+		  }
+	  }
+	  return "";
+  }
   static Object newCollection(Field field) {
 	Class<?> type = field.getType();
 	try {

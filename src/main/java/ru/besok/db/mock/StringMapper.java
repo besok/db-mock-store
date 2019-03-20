@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.BiFunction;
 
 /**
  * Basic interface supplier for generating values for plain fields.
@@ -45,7 +46,7 @@ public interface StringMapper {
 
   StringFunction<Short> shortVal();
 
-  StringFunction<? extends Enum<?>> enumVal();
+  StringBiFunction<Class<?>,? extends Enum<?>> enumVal();
 
   default Object generate(Class<?> clazz, String val) {
 	try {
@@ -90,9 +91,8 @@ public interface StringMapper {
 		  return longVal().apply(val);
 	  }
 
-	  if (!Objects.isNull(clazz.getSuperclass())
-		&& clazz.getSuperclass().equals(Enum.class)) {
-		return enumVal().apply(val);
+	  if (!Objects.isNull(clazz.getSuperclass()) && clazz.getSuperclass().equals(Enum.class)) {
+		return enumVal().apply(clazz,val);
 	  }
 	} catch (Throwable e) {
 	  throw new StringMapExeption(" couldn't transform an input value =" + val + " to class=" + clazz.getName()
@@ -103,5 +103,8 @@ public interface StringMapper {
 
   interface StringFunction<V> {
 	V apply(String s) throws Exception;
+  }
+  interface StringBiFunction<I,V>{
+  	V apply(I input,String s) throws Exception;
   }
 }
