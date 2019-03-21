@@ -50,5 +50,13 @@ public class CommonCaseExampleTest extends AbstractJpaFileMock {
         }
     }
 
+    @Test
+    public void testGetter(){
+        Client client = new Client();
+        client.setAge(1L);
+        client.setId(12);
+        client.setName("Name");
+        toFile(client,"getter");
+    }
 
 }

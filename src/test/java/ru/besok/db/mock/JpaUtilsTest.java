@@ -5,6 +5,7 @@ import org.junit.Test;
 import ru.besok.db.mock.data.common.*;
 
 
+import javax.persistence.Id;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
@@ -34,11 +35,20 @@ public class JpaUtilsTest {
 	assertEquals("camel__to__snake",JpaUtils.camelToSnake("camel_To_Snake"));
   }
 
-  @Test
+	@Test
+	public void annotationGetterTest() throws NoSuchFieldException {
+		Field id = Client.class.getDeclaredField("id");
+		Optional<Id> annotation = findAnnotation(id, Client.class, Id.class);
+
+		Assert.assertTrue(annotation.isPresent());
+
+	}
+
+	@Test
   public void findIdInFieldTest() throws NoSuchFieldException {
 	Class<City> cityClass = City.class;
-	Optional<JpaId> idOpt = findIdInField(cityClass.getDeclaredField("id"));
-	Optional<JpaId> codeOpt = findIdInField(cityClass.getDeclaredField("code"));
+	Optional<JpaId> idOpt = findIdInField(cityClass.getDeclaredField("id"),cityClass);
+	Optional<JpaId> codeOpt = findIdInField(cityClass.getDeclaredField("code"),cityClass);
 	Assert.assertTrue(idOpt.isPresent());
 	Assert.assertFalse(idOpt.get().isGenerated());
 	assertEquals(idOpt.get().getColumn(),"id");

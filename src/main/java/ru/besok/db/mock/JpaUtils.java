@@ -1,7 +1,11 @@
 package ru.besok.db.mock;
 
 import javax.persistence.*;
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
 
 import static ru.besok.db.mock.JpaDependency.Property.ALWAYS_NEW;
@@ -40,16 +44,20 @@ class JpaUtils {
         return sb.toString();
     }
 
-    static Optional<JpaId> findIdInField(Field field) {
-        if (field.isAnnotationPresent(Id.class)) {
+    static Optional<JpaId> findIdInField(Field field,Class<?> cl) {
+        Optional<Id> id = findAnnotation(field, cl, Id.class);
+
+        if (id.isPresent()) {
             String col = camelToSnake(field.getName());
-            if (field.isAnnotationPresent(Column.class)) {
-                String name = field.getAnnotation(Column.class).name();
+            Optional<Column> column = findAnnotation(field, cl, Column.class);
+            if (column.isPresent()) {
+                String name = column.get().name();
                 if (!name.isEmpty()) {
                     col = name;
                 }
             }
-            if (field.isAnnotationPresent(GeneratedValue.class)) {
+            Optional<GeneratedValue> genVal = findAnnotation(field, cl, GeneratedValue.class);
+            if (genVal.isPresent()) {
                 return Optional.of(new JpaId(field, col, true));
             }
             return Optional.of(new JpaId(field, col, false));
@@ -73,12 +81,14 @@ class JpaUtils {
     }
 
     static boolean processManyToOne(JpaEntity entity, Field field) {
-        if (field.isAnnotationPresent(ManyToOne.class)) {
-            ManyToOne ann = field.getDeclaredAnnotation(ManyToOne.class);
-            JoinColumn jc = firstJoinColumn(field);
+        Class<?> parent = entity.getEntityClass();
+        Optional<ManyToOne> m2o = findAnnotation(field, parent, ManyToOne.class);
+        if (m2o.isPresent()) {
+            ManyToOne ann = m2o.get();
+            JoinColumn jc = firstJoinColumn(field, parent);
             String mappedBy = Objects.nonNull(jc) ? jc.referencedColumnName() : "";
             JpaDependency d =
-                    new JpaDependency(field, null, entity, columnForDependency(field), M2O, mappedBy)
+                    new JpaDependency(field, null, entity, columnForDependency(field, parent), M2O, mappedBy)
                             .property(OPTIONAL, ann.optional())
                             .property(JOIN_PRIMARY_KEYS, false)
                             .property(ALWAYS_NEW, false);
@@ -89,8 +99,9 @@ class JpaUtils {
     }
 
     static boolean processOneToMany(JpaEntity entity, Field field) {
-        if (field.isAnnotationPresent(OneToMany.class)) {
-            OneToMany ann = field.getDeclaredAnnotation(OneToMany.class);
+        Optional<OneToMany> o2m = findAnnotation(field, entity.getEntityClass(), OneToMany.class);
+        if (o2m.isPresent()) {
+            OneToMany ann = o2m.get();
             entity.addDep(new JpaDependency(field, null, entity, field.getName(), O2M, ann.mappedBy()));
             return true;
         }
@@ -98,9 +109,11 @@ class JpaUtils {
     }
 
     static boolean processOneToOne(JpaEntity entity, Field field) {
-        if (field.isAnnotationPresent(OneToOne.class)) {
-            OneToOne ann = field.getDeclaredAnnotation(OneToOne.class);
-            JoinColumn jc = firstJoinColumn(field);
+        Class<?> parent = entity.getEntityClass();
+        Optional<OneToOne> o2o = findAnnotation(field, parent, OneToOne.class);
+        if (o2o.isPresent()) {
+            OneToOne ann = o2o.get();
+            JoinColumn jc = firstJoinColumn(field, parent);
             String colName = field.getName();
             if (jc != null) {
                 String jcName = jc.name();
@@ -109,39 +122,50 @@ class JpaUtils {
             entity.addDep(
                     new JpaDependency(field, null, entity, colName, O2O, ann.mappedBy())
                             .property(OPTIONAL, ann.optional())
-                            .property(JOIN_PRIMARY_KEYS, field.isAnnotationPresent(PrimaryKeyJoinColumn.class))
+                            .property(JOIN_PRIMARY_KEYS, isPrimaryKeyJoinCol(entity, field))
             );
             return true;
         }
         return false;
     }
 
+    private static boolean isPrimaryKeyJoinCol(JpaEntity entity, Field field) {
+        return findAnnotation(field,entity.getEntityClass(), PrimaryKeyJoinColumn.class)
+                .isPresent();
+    }
+
     static boolean processManyToMany(JpaEntity entity, Field field) {
-        if (field.isAnnotationPresent(ManyToMany.class)) {
+        Optional<ManyToMany> m2m = findAnnotation(field, entity.getEntityClass(), ManyToMany.class);
+        if (m2m.isPresent()) {
             return true;
         }
         return false;
     }
 
     static boolean processPlain(JpaEntity entity, Field field) {
-        if (field.isAnnotationPresent(Column.class)) {
-            Column ann = field.getDeclaredAnnotation(Column.class);
+        Class<?> pr = entity.getEntityClass();
+        Optional<Column> col = findAnnotation(field, pr, Column.class);
+        if (col.isPresent()) {
+            Column ann = col.get();
             String name = ann.name().equals("") ? camelToSnake(field.getName()) : ann.name();
-            entity.addCol(new JpaColumn(field, name, ann.nullable(), ann.length(), ann.precision(), ann.scale(),enumflag(field)));
+            entity.addCol(new JpaColumn(field, name, ann.nullable(), ann.length(), ann.precision(), ann.scale(), enumflag(field, pr)));
         } else {
-            entity.addCol(new JpaColumn(field, camelToSnake(field.getName()), true, 0, 0, 0,enumflag(field)));
+            entity.addCol(new JpaColumn(field, camelToSnake(field.getName()), true, 0, 0, 0, enumflag(field, pr)));
         }
         return true;
     }
 
-    private static JpaColumn.EnumFlag enumflag(Field field) {
+    private static JpaColumn.EnumFlag enumflag(Field field,Class<?> cl) {
         Class<?> aClass = field.getType();
         if (aClass.isEnum()) {
-            if (field.isAnnotationPresent(Enumerated.class)) {
-                Enumerated annotation = field.getAnnotation(Enumerated.class);
-                switch (annotation.value()){
-                    case ORDINAL: return JpaColumn.EnumFlag.ORDINAL;
-                    case STRING: return JpaColumn.EnumFlag.STRING;
+            Optional<Enumerated> enumerated = findAnnotation(field, cl, Enumerated.class);
+            if (enumerated.isPresent()) {
+                Enumerated annotation = enumerated.get();
+                switch (annotation.value()) {
+                    case ORDINAL:
+                        return JpaColumn.EnumFlag.ORDINAL;
+                    case STRING:
+                        return JpaColumn.EnumFlag.STRING;
                 }
             }
         }
@@ -176,20 +200,33 @@ class JpaUtils {
         return concat(delim, res);
     }
 
-    private static JoinColumn firstJoinColumn(Field field) {
-        if (field.isAnnotationPresent(JoinColumns.class)) {
-            return field.getDeclaredAnnotation(JoinColumns.class).value()[0];
+    private static JoinColumn firstJoinColumn(Field field,Class<?> cl) {
+        Optional<JoinColumns> joinColumns = findAnnotation(field, cl, JoinColumns.class);
+        if (joinColumns.isPresent()) {
+            return joinColumns.get().value()[0];
         }
-        if (field.isAnnotationPresent(JoinColumn.class)) {
-            return field.getDeclaredAnnotation(JoinColumn.class);
-        }
+        Optional<JoinColumn> joinColumn = findAnnotation(field, cl, JoinColumn.class);
+        return joinColumn.orElse(null);
 
-        return null;
     }
 
-    private static String columnForDependency(Field f) {
-        JoinColumn jc = firstJoinColumn(f);
+    private static String columnForDependency(Field f,Class<?> cl) {
+        JoinColumn jc = firstJoinColumn(f,cl);
         return Objects.isNull(jc) ? camelToSnake(f.getName()) : jc.name();
     }
 
+    protected static <T extends Annotation> Optional<T> findAnnotation(Field field, Class<?> parentClass, Class<T> annotationClass) {
+        if (field.isAnnotationPresent(annotationClass)) {
+            return Optional.of(field.getAnnotation(annotationClass));
+        }
+        try {
+            Method getter = new PropertyDescriptor(field.getName(), parentClass).getReadMethod();
+            if (getter.isAnnotationPresent(annotationClass)) {
+                return Optional.of(getter.getAnnotation(annotationClass));
+            }
+        } catch (IntrospectionException e) {
+            return Optional.empty();
+        }
+        return Optional.empty();
+    }
 }

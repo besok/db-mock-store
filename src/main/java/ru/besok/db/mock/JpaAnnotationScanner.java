@@ -29,7 +29,8 @@ class JpaAnnotationScanner {
                 Field[] fields = cl.getDeclaredFields();
                 for (Field field : fields) {
                     if (isItForMeta(field)) {
-                        JpaUtils.findIdInField(field)
+
+                        JpaUtils.findIdInField(field ,cl)
                                 .map(jpaEntity::setId)
                                 .orElseGet(() -> {
                                     boolean m2o = JpaUtils.processManyToOne(jpaEntity, field);

@@ -12,6 +12,6 @@ public class JpaAnnotationScannerTest {
   @Test
   public void scanTest() {
 	JpaEntityStore store = JpaAnnotationScanner.scan("ru.besok.db.mock.data.common");
-	Assert.assertEquals(store.getEntities().size(),44);
+	Assert.assertEquals(store.getEntities().size(),47);
   }
 }
